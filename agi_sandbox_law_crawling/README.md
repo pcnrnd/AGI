@@ -25,6 +25,22 @@ agi_sandbox_law_crawling/
   README.md
 ```
 
+## Python Modules (함수 단위 모듈화)
+노트북 로직을 파이썬 파일로 분리했습니다. (코드 위치: `src/agi_sandbox_law_crawling/`)
+
+- **Fintech Sandbox 기업소개 크롤러**
+  - 모듈: `src/agi_sandbox_law_crawling/sandbox/fintech_sandbox.py`
+  - 엔트리 함수: `crawl_fintech_enterprise_intro(...)`
+- **RFZ 규제자유특구 크롤러 (menuno=206)**
+  - 모듈: `src/agi_sandbox_law_crawling/sandbox/rfz_menuno206.py`
+  - 엔트리 함수: `crawl_rfz_menuno206(...)`
+- **법령 PDF → CSV 변환**
+  - 모듈: `src/agi_sandbox_law_crawling/laws/pdf_to_csv.py`
+  - 엔트리 함수: `process_all_pdfs(...)`
+- **샌드박스 정규화/마스터 생성**
+  - 모듈: `src/agi_sandbox_law_crawling/dataset/normalize_master.py`
+  - 엔트리 함수: `build_master_dataset(...)`
+
 ## Notebook Placement (현재 파일 기준 권장 위치)
 현재 `agi_sandbox_law_crawling` 루트에 있는 노트북을 아래 경로로 옮겨두면 됩니다.
 
@@ -63,4 +79,44 @@ agi_sandbox_law_crawling/
 
 ## Trade-offs & Alternatives
 - 장기적으로는 크롤러/파서를 `src/`로 분리하고 `pytest`를 붙이는 구성이 유지보수에 유리합니다.
+
+## How to Run (Python 모듈)
+### 1) Fintech Sandbox 크롤링
+
+```python
+from agi_sandbox_law_crawling.sandbox.fintech_sandbox import crawl_fintech_enterprise_intro
+
+raw_df, clean_df = crawl_fintech_enterprise_intro()
+```
+
+### 2) RFZ menuno=206 크롤링
+
+```python
+from agi_sandbox_law_crawling.sandbox.rfz_menuno206 import crawl_rfz_menuno206
+
+df = crawl_rfz_menuno206()
+```
+
+### 3) 법령 PDF → CSV
+
+```python
+from pathlib import Path
+from agi_sandbox_law_crawling.laws.pdf_to_csv import process_all_pdfs
+
+process_all_pdfs(
+    input_dir=Path("law_pdf_downloads"),
+    output_dir=Path("laws_csv"),
+    merge_to_one=True,
+    merged_filename="ALL_163_LAWS.csv",
+)
+```
+
+### 4) 샌드박스 마스터 CSV 생성
+
+```python
+from pathlib import Path
+from agi_sandbox_law_crawling.dataset.normalize_master import build_master_dataset
+
+build_master_dataset(base_dir=Path("."))
+```
 
